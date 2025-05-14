@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import gameRoutes from './routes/games';
 import healthRoutes from './routes/health';
+import sheetsRoutes from './routes/google-sheets';
 dotenv.config();
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/games', gameRoutes);
+app.use("/api/sheets", sheetsRoutes);
 app.use('/api/_health', healthRoutes);
 
 // MongoDB connection
