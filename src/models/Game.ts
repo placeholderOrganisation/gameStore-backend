@@ -1,15 +1,17 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IGame extends Document {
+export interface Game extends Document {
   name: string;
   platform: string;
   rating: number;
   price: number;
   imgs: string[];
   isActive: boolean;
+  genre: string;
+  featured: boolean;
   createdAt: Date;
   updatedAt: Date;
-  genre: string;
+  description: string;
 }
 
 const GameSchema: Schema = new Schema({
@@ -19,9 +21,11 @@ const GameSchema: Schema = new Schema({
   price: { type: Number, required: true },
   imgs: [{ type: String }],
   isActive: { type: Boolean, default: true },
-  genre: { type: String, required: true }
+  genre: { type: String, required: true },
+  featured: { type: Boolean, default: false },
+  description: { type: String, required: false }
 }, {
   timestamps: true
 });
 
-export default mongoose.model<IGame>('Game', GameSchema); 
+export default mongoose.model<Game>('Game', GameSchema); 
