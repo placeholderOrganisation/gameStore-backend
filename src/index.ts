@@ -4,7 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import gameRoutes from './routes/games';
 import healthRoutes from './routes/health';
-import sheetsRoutes from './routes/google-sheets';
+import sheetsRoutes from './routes/googleSheets';
 dotenv.config();
 
 const app = express();

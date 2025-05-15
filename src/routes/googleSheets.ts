@@ -1,5 +1,5 @@
 import express from "express";
-import { readFromSheet, writeToSheet } from "../services/google-sheets";
+import { readFromSheet, writeToSheet } from "../services/googleSheets";
 import { processAndStoreGames } from "../services/gameProcessor";
 
 const router = express.Router();
