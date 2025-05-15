@@ -3,6 +3,14 @@ import type { GameType } from "../models/Game";
 
 export async function insertGames(games: GameType[]) {
   if (!games.length) return;
-  console.log(games);
-  //   await Game.insertMany(games);
+  try {
+    await Game.insertMany(games, { ordered: false });
+  } catch (err: any) {
+    if (err.code === 11000 || err.writeErrors) {
+      // Duplicate key error(s), log and continue
+      console.warn("Some games were duplicates and were skipped.");
+    } else {
+      throw err;
+    }
+  }
 }
