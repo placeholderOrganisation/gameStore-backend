@@ -1,17 +1,41 @@
-import { parseSheetData } from "../utils/parseSheetData";
+import { parseSheetData, RawGameEntry } from "../utils/parseSheetData";
 import {
   fetchGameInfoFromGiantBomb,
   fetchGameInfoFromRAWG,
 } from "./gameInfoService";
-import { insertGames } from "../repository/gameRepository";
+import {
+  getExistingGames,
+  insertGames,
+  updateGames,
+} from "../repository/gameRepository";
 import type { GameType } from "../models/Game";
 
 export async function processAndStoreGames(
   rows: (string | number)[][]
 ): Promise<void> {
   const rawGames = parseSheetData(rows);
-  const names = [...new Set(rawGames.map((g) => g.name))];
-
+  const existingGames = await getExistingGames();
+  const newGames = rawGames.filter(
+    (game) =>
+      !existingGames.some((g) => {
+        return g.name === game.name && g.platform === game.platform;
+      })
+  );
+  const existingStaleGames: RawGameEntry[] = rawGames
+    .map((ug) => {
+      const dbGame = existingGames.find(
+        (g) => g.name === ug.name && g.platform === ug.platform
+      );
+      if (
+        dbGame &&
+        (ug.featured !== dbGame.featured || ug.price !== dbGame.price)
+      ) {
+        return ug;
+      }
+      return undefined;
+    })
+    .filter((g): g is RawGameEntry => Boolean(g));
+  const names = [...new Set(newGames.map((g) => g.name))];
   const infoMap = new Map<string, any>();
 
   await Promise.all(
@@ -39,7 +63,7 @@ export async function processAndStoreGames(
     })
   );
 
-  const enrichedGames = rawGames.map(
+  const enrichedGames = newGames.map(
     (game): GameType => {
       const info = infoMap.get(game.name);
       return {
@@ -58,4 +82,5 @@ export async function processAndStoreGames(
   );
 
   await insertGames(enrichedGames);
+  await updateGames(existingStaleGames);
 }
