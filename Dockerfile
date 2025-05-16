@@ -14,7 +14,7 @@ RUN yarn install
 COPY . .
 
 # Build TypeScript code
-RUN yarn build
+RUN NODE_OPTIONS="--max_old_space_size=2048" yarn build
 
 # Expose port
 EXPOSE ${PORT}
