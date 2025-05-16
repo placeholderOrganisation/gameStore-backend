@@ -16,10 +16,10 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/games", gameRoutes);
-app.use("/api/email", emailRoutes);
-app.use("/api/sheets", sheetsRoutes);
-app.use("/api/_health", healthRoutes);
+app.use("/games", gameRoutes);
+app.use("/email", emailRoutes);
+app.use("/sheets", sheetsRoutes);
+app.use("/_health", healthRoutes);
 
 // MongoDB connection
 mongoose
